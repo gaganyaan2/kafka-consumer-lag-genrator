@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-consumer
+  env: prod
+spec:
+  selector:
+    matchLabels:
+      app: kafka-consumer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer
+    spec:
+      containers:
+      - name: kafka-consumer
+        image: kafka-consumer-lag-generator:1.0
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "python -u /kafka/consumer.py --server kafka:9092 --consumer_group group1 --topic topic1 --messages 100 --sleep 1"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
